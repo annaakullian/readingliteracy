@@ -1,0 +1,92 @@
+input, button {
+    margin-left:4px;
+}
+input {
+    width:83px;
+}
+button {
+    width:87px;
+    padding:5px 0px 5px 0px;
+}
+.container {
+    min-width:90px;
+    max-width:90px;
+    height:350px;
+    position:relative;
+    width:100%;
+}
+.attendance {
+    width:90%;
+    float:left;
+    background-color:#1f1f1f;
+    margin:7px 5% 5px 5%;
+    padding-bottom:10px;
+    border-style:solid;
+    border-color: #111111 #4e4e4e #4e4e4e #111111;
+    border-width:2px;
+    position:relative;
+}
+.attendance .title {
+    font-family:"Arial";
+    color:white;
+    font-size:9pt;
+    font-weight:bold;
+    text-align:center;
+    padding:15px 0px 5px 0px;
+}
+.attendance-bar {
+    float:left;
+    width:90%;
+    margin:0px 5% 0px 5%;
+    height:260px;
+    background-color:#2f2f2f;
+    position:relative;
+}
+.attendance-cage-css {
+    width:100%;
+    float:left;
+    position:relative;
+}
+.bar-1, .bar-2, .bar-3, .bar-4, .bar-5, .bar-6, .bar-7, .bar-8, .bar-9 {
+    float:left;
+    width:100%;
+    background-color:#1f1f1f;
+    height:10px;
+}
+.bar-1 {
+    margin-bottom:14px;
+}
+.bar-2 {
+    margin-bottom:15px;
+}
+.bar-3 {
+    margin-bottom:16px;
+}
+.bar-4 {
+    margin-bottom:17px;
+}
+.bar-5 {
+    margin-bottom:18px;
+}
+.bar-6 {
+    margin-bottom:19px;
+}
+.bar-7 {
+    margin-bottom:20px;
+}
+.bar-8 {
+    margin-bottom:24px;
+}
+.bar-9 {
+    margin-bottom:22px;
+}
+.attendance-level {
+    float:left;
+    height:100px;
+    max-height:250px;
+    width:100%;
+    background-color:#6ae719;
+    position:absolute;
+    bottom:0;
+    transition: background-color 0.5s ease-in;  
+}
