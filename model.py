@@ -7,15 +7,12 @@ from sqlalchemy import Column, Integer, String, DateTime, Boolean
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship, backref
+from datetime import datetime 
 import os
 
-#change the url to env variable
-
-#Association proxy (bit over-detailed) http://docs.sqlalchemy.org/en/rel_0_9/orm/extensions/associationproxy.html
-#http://docs.sqlalchemy.org/en/rel_0_8/orm/relationships.html look for One to One section
 
 #engine is connecion to db
-engine = create_engine("postgres://localhost:5432/readingviz", echo=True)
+engine = create_engine(os.environ.get("DATABASE_URL"), echo=True)
 
 #connection negotiation-talks to db 
 session = scoped_session(sessionmaker(bind=engine,
@@ -24,13 +21,16 @@ session = scoped_session(sessionmaker(bind=engine,
 Base = declarative_base()
 Base.query = session.query_property()
 
-
-#inherit from a time stamp class
-#database index: 
 #association proxy: 
+#all tables inherit from timestamp and base
+class AutoTimestamp(object):
+    created_at = Column(DateTime, default=datetime.utcnow,
+                        nullable=False)
+    updated_at = Column(DateTime, default=datetime.utcnow,
+                        onupdate=datetime.utcnow, nullable=False)
 
 #these are the scholars
-class Scholar(Base):
+class Scholar(Base, AutoTimestamp):
 	__tablename__= "scholars"
 
 	id = Column(Integer, primary_key = True)
@@ -41,44 +41,46 @@ class Scholar(Base):
 	#scholars = relationship goal
 
 #keeps track of all of the scholar's goals. Many to one relationshipt with Scholars
-class Goal(Base):
+class Goal(Base, AutoTimestamp):
 	__tablename__="goals"
 
 	id = Column(Integer, primary_key = True)
+	goal_number = Column(Integer, nullable = True)
+	goal_description = Column(String(1000), nullable = True)
 	scholar_id = Column(Integer, ForeignKey('scholars.id'))
 	achieved = Column(Boolean, nullable = True)
 	status = Column(Integer, nullable = True)
 
-	scholar = relationship("Scholar", backref=backref("scholars", order_by=id))
+	scholar = relationship("Scholar", backref=backref("goals", order_by=id))
 	#look to see if foreing key to cscholar class
 
 #this table keeps track of all books
-class Book(Base):
+class Book(Base, AutoTimestamp):
 	__tablename__="books"
 	id = Column(Integer, primary_key = True)
 	author = Column(String(500), nullable = True)
 	title = Column(String(1000), nullable = True)
 
 #this table stores which books scholars have read
-class BookLog(Base):
+class BookLog(Base, AutoTimestamp):
 	__tablename__="booklogs"
 	id = Column(Integer, primary_key = True)
 	book_id = Column(Integer, ForeignKey('books.id'))
-	scholar_id = Column(Integer, ForeignKey('books.id'))
+	scholar_id = Column(Integer, ForeignKey('scholars.id'))
 
-	book = relationship("Book", backref=backref("books", order_by=id))
-	scholar = relationship("Scholar", backref=backref("scholars", order_by=id))
+	book = relationship("Book", backref=backref("booklogs", order_by=id))
+	scholar = relationship("Scholar", backref=backref("booklogs", order_by=id))
 
 #this table stores ratings for each book-scholar pair
-class Rating(Base):
+class Rating(Base, AutoTimestamp):
 	__tablename__="ratings"
 	id = Column(Integer, primary_key = True)
 	book_id = Column(Integer, ForeignKey('books.id'))
-	scholar_id = Column(Integer, ForeignKey('books.id'))
+	scholar_id = Column(Integer, ForeignKey('scholars.id'))
 	rating = Column(Integer, primary_key = True)
 
-	book = relationship("Book", backref=backref("books", order_by=id))
-	scholar = relationship("Scholar", backref=backref("scholars", order_by=id))
+	book = relationship("Book", backref=backref("ratings", order_by=id))
+	scholar = relationship("Scholar", backref=backref("ratings", order_by=id))
 
 
 if __name__ == "__main__":
