@@ -25,9 +25,9 @@ Base.query = session.query_property()
 #all tables inherit from timestamp and base
 class AutoTimestamp(object):
     created_at = Column(DateTime, default=datetime.utcnow,
-                        nullable=False)
+                        nullable=True)
     updated_at = Column(DateTime, default=datetime.utcnow,
-                        onupdate=datetime.utcnow, nullable=False)
+                        onupdate=datetime.utcnow, nullable=True)
 
 #these are the scholars
 class Scholar(Base, AutoTimestamp):
