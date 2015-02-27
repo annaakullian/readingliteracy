@@ -1,0 +1,67 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>welcome, scholar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="static/css/bootstrap.css" rel="stylesheet">
+  
+    <link href="static/css/bootstrap-responsive.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+   
+  </head>
+
+  <style>
+.container-fluid {
+    padding-top: 10px;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    width: 35%;
+}
+  </style>
+
+  <body>
+
+
+
+   <nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+ 
+
+    <div>
+      <ul class= "nav navbar-nav">
+        
+     <!--    <li>
+          <button data-toggle="dropdown" class="btn btn-info dropdown-toggle">My Goals <span class="caret"></span></button>
+            <ul class="dropdown-menu">
+                <li><a href="/activegoals">Active Goals</a></li>
+                <li><a href="#">Create New Goal</a></li>
+                <li><a href="/goalgallery">Goal Gallery</a></li>
+            </ul>
+        </li>
+         -->
+        <li><a href="/activegoals" role="button">Active Goals</a></li> 
+        <li><a href="/goalgallery" role="button">Goal Gallery</a></li> 
+        <li><a href="/Library" role="button">My Library</a></li> 
+        <li><a href="/logout" role="button">Logout</a></li> 
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+
+
+  {% block body %}{% endblock %}
+
+  </body>
+</html>

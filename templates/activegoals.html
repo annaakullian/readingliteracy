@@ -1,1 +1,25 @@
-{{user}}
+{% extends "base.html" %}
+
+{% block body %}
+<style>
+      body {
+        padding-top: 30px; /* 60px to make the container go all the way to the bottom of the topbar */
+        background-image: url("../static/images/Frog.jpg");
+        background-repeat: no-repeat;
+        background-position: center bottom;
+        background-attachment: fixed;
+      }
+</style>
+<div class="container">
+
+      <h1>{{user}}'s Goals!</h1>
+
+
+</div> <!-- /container -->
+
+</div>
+	{{user.goals}}
+
+<a href="/addgoal" class="btn btn-lg btn-info"><span class="glyphicon glyphicon-star-empty"></span>Create New Goal</a>
+{% endblock %}  
+

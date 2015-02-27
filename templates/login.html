@@ -22,6 +22,19 @@
   </style>
   </head>
 
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <ul class=flashes>
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+
+   {% if error %}
+    <p class=error><strong>Hey Scholar!:</strong> {{ error }}
+  {% endif %}
 
   <body>
     <div class="container">
@@ -79,11 +92,27 @@
       </form>
 
     </div> <!-- /container -->
+    
 
+      <script>
+        var harvest_items=[];
+        var item_to_show;
+        $("#harvest-result").hide()
 
-
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
+        function show_first_harvest_item() {
+          if (harvest_items.length == 0) {
+            alert("There are no more items in this search, consider expanding your filter, and harvest again!");
+            $("#harvest-result").hide();
+            return; 
+          }
+          item_to_show = harvest_items[0];
+          // console.log(i, item_to_show);
+          $("#current-image").attr("src", item_to_show.photo);
+          $("#harvest-result h2").text(item_to_show.description);
+          $("#harvest-result").show();
+          harvest_items.shift();
+        }
+      </script>
+    
   </body>
 </html>
