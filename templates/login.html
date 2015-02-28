@@ -62,7 +62,7 @@
       </form>      
 
 
-      <form method="post" action="/scholarmain" id="info" enctype="multipart/form-data" class="form-signin">
+      <form method="post" action="/staffmain" id="info" enctype="multipart/form-data" class="form-signin">
 
         <div class="row">
           <div class="col-md-3">
@@ -94,25 +94,6 @@
     </div> <!-- /container -->
     
 
-      <script>
-        var harvest_items=[];
-        var item_to_show;
-        $("#harvest-result").hide()
-
-        function show_first_harvest_item() {
-          if (harvest_items.length == 0) {
-            alert("There are no more items in this search, consider expanding your filter, and harvest again!");
-            $("#harvest-result").hide();
-            return; 
-          }
-          item_to_show = harvest_items[0];
-          // console.log(i, item_to_show);
-          $("#current-image").attr("src", item_to_show.photo);
-          $("#harvest-result h2").text(item_to_show.description);
-          $("#harvest-result").show();
-          harvest_items.shift();
-        }
-      </script>
     
   </body>
 </html>

@@ -36,9 +36,22 @@ def staffmain():
 def activegoals():
 	return render_template("activegoals.html", user=session['user'])
 
-@app.route("/addgoal")
+@app.route("/addgoal", methods=['GET'])
 def addgoal():
 	return render_template("addgoal.html", user=session['user'])
+
+@app.route("/addgoal", methods=['POST'])
+def digestgoal():
+	#add goal into the database 
+	goal_number = request.form['goal_number']
+	goal_description = request.form['goal_description']
+	user_object = dbsession.query(Scholar).filter_by(name=session['user']).first()
+	goal = Goal(goal_number=goal_number, goal_description=goal_description, scholar_id=user_object.id, achieved=False, status=0) 
+	dbsession.add(goal)
+	dbsession.commit()
+	return redirect("/activegoals")
+	#add to database
+	#show in active goals 
 
 @app.route("/goalgallery")
 def goalgallery():

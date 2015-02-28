@@ -7,7 +7,7 @@ from sqlalchemy import Column, Integer, String, DateTime, Boolean
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship, backref
-from datetime import datetime 
+# from datetime import datetime 
 import os
 
 
@@ -23,14 +23,14 @@ Base.query = session.query_property()
 
 #association proxy: 
 #all tables inherit from timestamp and base
-class AutoTimestamp(object):
-    created_at = Column(DateTime, default=datetime.utcnow,
-                        nullable=True)
-    updated_at = Column(DateTime, default=datetime.utcnow,
-                        onupdate=datetime.utcnow, nullable=True)
+# class AutoTimestamp(object):
+#     created_at = Column(DateTime, default=datetime.utcnow,
+#                         nullable=True)
+#     updated_at = Column(DateTime, default=datetime.utcnow,
+#                         onupdate=datetime.utcnow, nullable=True)
 
 #these are the scholars
-class Scholar(Base, AutoTimestamp):
+class Scholar(Base):
 	__tablename__= "scholars"
 
 	id = Column(Integer, primary_key = True)
@@ -41,7 +41,7 @@ class Scholar(Base, AutoTimestamp):
 	#scholars = relationship goal
 
 #keeps track of all of the scholar's goals. Many to one relationshipt with Scholars
-class Goal(Base, AutoTimestamp):
+class Goal(Base):
 	__tablename__="goals"
 
 	id = Column(Integer, primary_key = True)
@@ -55,14 +55,14 @@ class Goal(Base, AutoTimestamp):
 	#look to see if foreing key to cscholar class
 
 #this table keeps track of all books
-class Book(Base, AutoTimestamp):
+class Book(Base):
 	__tablename__="books"
 	id = Column(Integer, primary_key = True)
 	author = Column(String(500), nullable = True)
 	title = Column(String(1000), nullable = True)
 
 #this table stores which books scholars have read
-class BookLog(Base, AutoTimestamp):
+class BookLog(Base):
 	__tablename__="booklogs"
 	id = Column(Integer, primary_key = True)
 	book_id = Column(Integer, ForeignKey('books.id'))
@@ -72,7 +72,7 @@ class BookLog(Base, AutoTimestamp):
 	scholar = relationship("Scholar", backref=backref("booklogs", order_by=id))
 
 #this table stores ratings for each book-scholar pair
-class Rating(Base, AutoTimestamp):
+class Rating(Base):
 	__tablename__="ratings"
 	id = Column(Integer, primary_key = True)
 	book_id = Column(Integer, ForeignKey('books.id'))
