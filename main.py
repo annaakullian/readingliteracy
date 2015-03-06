@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session, redirect, flash
+from flask import Flask, render_template, request, session, redirect, flash, url_for, make_response
 from model import Scholar, Goal, Book, BookLog, Rating, session as dbsession
 import os
 import json
@@ -25,6 +25,7 @@ def scholarmain():
 		return render_template("login.html", error=error)
 	else:
 		#check to make sure user is in the database. if not, say to check spelling and try again"
+		#put user into session 
 		session['user'] = user.name
 		return render_template("scholarmain.html", scholar_name=user.name, scholar_school=user.school)
 
@@ -34,7 +35,27 @@ def staffmain():
 
 @app.route("/activegoals")
 def activegoals():
-	return render_template("activegoals.html", user=session['user'])
+	user = session['user']
+	scholar_id = dbsession.query(Scholar).filter_by(name=user).first().id
+	# scholar_id = scholar.id
+	goals = dbsession.query(Goal).filter_by(scholar_id=scholar_id).all()
+	return render_template("activegoals.html", user=session['user'], goals=goals)
+
+
+@app.route('/editgoal/<int:goalid>')
+def editgoal(goalid):
+	goal = dbsession.query(Goal).filter_by(id=goalid).first()
+	return render_template("editgoal.html", goal=goal)
+
+@app.route('/editgoal/<int:goalid>', methods=['POST'])
+def digesteditgoal(goalid):
+	goal = dbsession.query(Goal).filter_by(id=goalid).first()
+	goal_number = request.form['goal_number']
+	goal_description = request.form['goal_description']
+	goal.goal_number = goal_number
+	goal.goal_description = goal_description
+	dbsession.commit()
+	return redirect("/activegoals")
 
 @app.route("/addgoal", methods=['GET'])
 def addgoal():
@@ -55,7 +76,10 @@ def digestgoal():
 
 @app.route("/goalgallery")
 def goalgallery():
-	return render_template("goalgallery.html")
+	user = session['user']
+	scholar_id = dbsession.query(Scholar).filter_by(name=user).first().id
+	goals = dbsession.query(Goal).filter_by(scholar_id=scholar_id).all()
+	return render_template("goalgallery.html", user=session['user'], goals=goals)
 
 @app.route("/scholarlibrary")
 def scholarlibrary():

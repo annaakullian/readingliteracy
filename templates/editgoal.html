@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block body %}
+<style>
+      body {
+        padding-top: 30px; /* 60px to make the container go all the way to the bottom of the topbar */
+        background-image: url("../static/images/Frog.jpg");
+        background-repeat: no-repeat;
+        background-position: center bottom;
+        background-attachment: fixed;
+      }
+</style>
+
+<div class="container">
+
+<h1>
+	Edit your Goal
+</h1>
+<h1> {{ goal.goal_number }}</h1>
+<form method="post" id="changegoal" action="/editgoal/{{goal.id}}" method="post" role="multipart/form" class="form-signin">
+
+<div class="row">
+   <div class="col-md-3" "form-group">
+      <label for="sel1">I want to read</label>
+      <select class="form-control" name = "goal_number" id="sel1" selected="{{goal.goal_number}}">
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+        <option>4</option>
+        <option>5</option>
+        <option>6</option>
+        <option>7</option>
+        <option>8</option>
+        <option>9</option>
+        <option>10</option>
+        <option>11</option>
+        <option>12</option>
+        <option>13</option>
+        <option>14</option>
+        <option>15</option>
+        <option>16</option>
+        <option>17</option>
+        <option>18</option>
+        <option>19</option>
+        <option>20</option>
+        <option>21</option>
+        <option>22</option>
+        <option>23</option>
+        <option>24</option>
+        <option>25</option>
+        <option>26</option>
+        <option>27</option>
+        <option>28</option>
+        <option>29</option>
+        <option>30</option>
+        <option>31</option>
+        <option>32</option>
+        <option>33</option>
+        <option>34</option>
+
+      </select>
+   </div>	
+
+     <div class="col-md-3" "form-group">
+      <label for="sel1">How Many?/For How Many?</label>
+      <select class="form-control" name="goal_description" id="sel1">
+        <option>Pages</option>
+        <option>Books</option>
+        <option>Chapers</option>
+        <option>Hours</option>
+        <option>Minutes</option>
+
+      </select>
+  </div>
+</div>
+
+<!-- <div class="row">
+  <div class="col-md-6" "form-group">
+    <label for="description">Short Description:</label>
+    <input type="text" name="description" class="form-control" placeholder="I hope to..." value="">
+  </div>
+</div> -->
+
+<div class="row">
+  <div class="col-md-6 actions">
+     <input type="submit" class="btn btn-lg btn-primary btn-block" value="Submit Change">
+  </div>
+</div>
+</form>
+
+
+</div>
+{% endblock %}  

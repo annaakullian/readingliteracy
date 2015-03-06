@@ -15,12 +15,23 @@
       <h1>{{user}}'s Goals!</h1>
 
 
-</div> <!-- /container -->
+{% for goal in goals %}
+		{% if goal.achieved == False %}
+			<div class="row">
+			<h2>Your Goal Is To Read {{goal.goal_number}} {{goal.goal_description}}</h2>
+			<h1>status: {{goal.status}}/{{goal.goal_number}}</h1>
+			
+			<a href="/editgoal/{{goal.id}}" class="btn btn-xs btn-info"><span class="glyphicon glyphicon-star-empty"></span>Edit Goal</a>
 
-</div>
-	{{user.goals}}
+			</div>
+		{% endif %}
+{% endfor %}
+
+
 
 <a href="/addgoal" method="GET" class="btn btn-lg btn-info"><span class="glyphicon glyphicon-star-empty"></span>Create New Goal</a>
 {% endblock %}  
 
+
+</div> <!-- /container -->
 
