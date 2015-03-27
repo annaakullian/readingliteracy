@@ -3,7 +3,7 @@
 
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
-from sqlalchemy import Column, Integer, String, DateTime, Boolean
+from sqlalchemy import Column, Integer, String, DateTime, Boolean, BigInteger 
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship, backref
@@ -47,6 +47,7 @@ class Goal(Base):
 	id = Column(Integer, primary_key = True)
 	goal_number = Column(Integer, nullable = True)
 	goal_description = Column(String(1000), nullable = True)
+	strength_or_endurance = Column(String(1000), nullable = True)
 	scholar_id = Column(Integer, ForeignKey('scholars.id'))
 	achieved = Column(Boolean, nullable = True)
 	status = Column(Integer, nullable = True)
@@ -54,12 +55,23 @@ class Goal(Base):
 	scholar = relationship("Scholar", backref=backref("goals", order_by=id))
 	#look to see if foreing key to cscholar class
 
+class TimeGoals(Base):
+	__tablename__="timegoals"
+
+	id = Column(Integer, primary_key = True)
+	timegoal_number = Column(Integer, nullable = True)
+	scholar_id = Column(Integer, ForeignKey('scholars.id'))
+	achieved = Column(Boolean, nullable = True)
+
+	scholar = relationship("Scholar", backref=backref("timegoals", order_by=id))
+
 #this table keeps track of all books
 class Book(Base):
 	__tablename__="books"
 	id = Column(Integer, primary_key = True)
 	author = Column(String(500), nullable = True)
 	title = Column(String(1000), nullable = True)
+	isbn = Column(BigInteger, nullable=True)
 
 #this table stores which books scholars have read
 class BookLog(Base):

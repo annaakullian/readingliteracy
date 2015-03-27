@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+
+<style>
+			body {
+				padding-top: 30px; /* 60px to make the container go all the way to the bottom of the topbar */
+				background-image: url("../static/images/Frog.jpg");
+				background-repeat: no-repeat;
+				background-position: center bottom;
+				background-attachment: fixed;
+			}
+
+
+
+</style>
+
+<div class="container">
+
+
+<h1>
+	Add a Book to your Library
+</h1>
+
+<form method="post" id="addbook" action="/addbook" role="multipart/form" class="form-signin">
+
+<div class="row">
+
+	 <div class="col-md-3" "form-group">
+		<label for="title">Book Title</label>
+		<input type="title" class="form-control" name="title" id="title" placeholder="Book Title">
+	</div>
+ </div>
+
+<div class="row"> 
+	<div class="col-md-3" "form-group">
+		<label for="author">Author</label>
+		<input type="author" class="form-control" name="author" id="author" placeholder="Author">
+	</div>
+ </div>
+
+ <div class="row">
+
+	 <div class="col-md-3" "form-group">
+			<label for="sel1">Rate this book <br> 10 = I loved this book  <br> 1 = I didn't enjoy this book <br> 0 = I haven't read this book yet</label>
+			<select class="form-control" name = "rating" id="rating">
+				<option>0</option>
+				<option>1</option>
+				<option>2</option>
+				<option>3</option>
+				<option>4</option>
+				<option>5</option>
+				<option>6</option>
+				<option>7</option>
+				<option>8</option>
+				<option>9</option>
+				<option>10</option>
+			</select>
+	 </div>	
+</div>
+
+
+		 
+
+<div class="row">
+	<div class="col-md-3 actions">
+		 <input type="submit" class="btn btn-lg btn-primary btn-block" value="Add">
+	</div>
+</div>
+</form>
+
+
+
+
+
+</div>
+
+{% endblock %}  
