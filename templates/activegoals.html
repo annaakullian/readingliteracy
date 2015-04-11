@@ -19,13 +19,14 @@
 		{% if goal.achieved == False %}
 			<div class="row">
 			{% if goal.strength_or_endurance == 'strength' %}
-				<h2>Your Goal Is To Read for {{goal.goal_number}} {{goal.goal_description}}</h2>
-				<h1>status: {{goal.status}}/{{goal.goal_number}}</h1>
-			{% elif goal.strength_or_endurance == 'endurance' %}
 				<h2>Your Goal Is To Read {{goal.goal_number}} {{goal.goal_description}}</h2>
 				<h1>status: {{goal.status}}/{{goal.goal_number}}</h1>
+				<a href="/editstrengthgoal/{{goal.id}}" class="btn btn-xs btn-info"><span class="glyphicon glyphicon-star-empty"></span>Edit Goal</a>
+			{% elif goal.strength_or_endurance == 'endurance' %}
+				<h2>Your Goal Is To Read for {{goal.goal_number}} {{goal.goal_description}}</h2>
+				<h1>status: {{goal.status}}/{{goal.goal_number}}</h1>
+				<a href="/editendurancegoal/{{goal.id}}" class="btn btn-xs btn-info"><span class="glyphicon glyphicon-star-empty"></span>Edit Goal</a>
 			{% endif %}
-			<a href="/editgoal/{{goal.id}}" class="btn btn-xs btn-info"><span class="glyphicon glyphicon-star-empty"></span>Edit Goal</a>
 			</div>
 		{% endif %}
 {% endfor %}
@@ -46,7 +47,8 @@
 
 
 <div>
-	<h1>Short Reading Goals</h1>
+
+
 
 
 {% endblock %}  

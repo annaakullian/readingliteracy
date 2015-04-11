@@ -23,6 +23,26 @@ def logout():
 	session.pop('username', None)
 	return redirect("/")
 
+@app.route("/addscholar")
+def addscholar():
+	return render_template("addscholar.html")
+
+@app.route("/addnewscholar", methods=['GET', 'POST'])
+def addnewscholar():	
+	scholar_name = request.form['scholar_name']
+	scholar_school = request.form['scholar_school']
+	scholar_grade = request.form['grade']
+	user = dbsession.query(Scholar).filter_by(name=scholar_name).first()
+	if user:
+		error = "You already have an account. Please login Here"
+		return render_template("login.html", error=error)
+	else:
+		user = Scholar(name=scholar_name, school=scholar_school, grade=scholar_grade)
+		dbsession.add(user)
+		dbsession.commit()
+		return redirect("/")
+
+
 @app.route("/scholarmain", methods=['GET', 'POST'])
 def scholarmain():
 	scholar_name = request.form['scholar_name']
@@ -56,13 +76,28 @@ def activegoals():
 	return render_template("activegoals.html", user=session['user'], goals=goals)
 
 
-@app.route('/editgoal/<int:goalid>')
+@app.route('/editstrengthgoal/<int:goalid>')
 def editgoal(goalid):
 	goal = dbsession.query(Goal).filter_by(id=goalid).first()
 	return render_template("editgoal.html", goal=goal)
 
-@app.route('/editgoal/<int:goalid>', methods=['POST'])
+@app.route('/editstrengthgoal/<int:goalid>', methods=['POST'])
 def digesteditgoal(goalid):
+	goal = dbsession.query(Goal).filter_by(id=goalid).first()
+	goal_number = request.form['goal_number']
+	goal_description = request.form['goal_description']
+	goal.goal_number = goal_number
+	goal.goal_description = goal_description
+	dbsession.commit()
+	return redirect("/activegoals")
+
+@app.route('/editendurancegoal/<int:goalid>')
+def editendurancegoal(goalid):
+	goal = dbsession.query(Goal).filter_by(id=goalid).first()
+	return render_template("editendurancegoal.html", goal=goal)
+
+@app.route('/editendurancegoal/<int:goalid>', methods=['POST'])
+def digesteditendurancegoal(goalid):
 	goal = dbsession.query(Goal).filter_by(id=goalid).first()
 	goal_number = request.form['goal_number']
 	goal_description = request.form['goal_description']
@@ -132,6 +167,7 @@ def scholarlibrary():
 		file.close()
 		data = xmltodict.parse(data)
 		xml_dictionary[book] = data
+		print "TREEHOUSE", xml_dictionary
 		# print xml_dictionary
 
 		# xml_dictionary[book] = tree
@@ -142,10 +178,12 @@ def scholarlibrary():
 		else:
 			rating_dictionary[book] = ["rate this book"]
 	isbn_dictionary = {}
+	print "HERE WE ARE"
 	for book in xml_dictionary.keys():
 		book_id = book.id
 		book_object = dbsession.query(Book).filter_by(id=book_id).first()
 		isbn_number_from_db = book_object.isbn
+		print "DID WE GET HERE", book_object.isbn
 		if not isbn_number_from_db:
 			diction = xml_dictionary[book]
 			isbn_number = diction.get(u'idlist', None)
@@ -153,7 +191,6 @@ def scholarlibrary():
 			while isinstance(isbn_number2, list):
 				isbn_number2 = isbn_number2[0]
 			# int_isbn_number = int(str((isbn_number2)))
-			print "YEAH:", isbn_number2
 			if len(str(isbn_number2))==9:
 				isbn_number2 = "0" + str(isbn_number2)
 			elif len(str(isbn_number2))==9:
@@ -161,25 +198,23 @@ def scholarlibrary():
 			else:
 				isbn_number2 = isbn_number2
 			book_object.isbn = isbn_number2
+			print "yeahyeah", isbn_number2
 			dbsession.commit()
 	for book in rating_dictionary.keys():
-		print "keys", rating_dictionary.keys()
-		print "key in book rating dict", book
 		book_isbn = book.isbn
 		length_isbn = len(str(book_isbn))
-		print "length yeah", length_isbn
 		if length_isbn==9:
 			book_isbn = "0" + str(book_isbn)
 		elif length_isbn==8:
 			book_isbn = "00" + str(book_isbn)
 		else:
-			book_isbn = book_isbn
+			book_isbn = book.isbn
 		value_to_append = [book_isbn]
 		old_value = rating_dictionary.get(book, [])
 		new_value = old_value + value_to_append
 		rating_dictionary[book] = new_value
-
-		print "RUNSHINE", rating_dictionary
+		print rating_dictionary[book]
+		print rating_dictionary[book][0].rating
 
 
 	return render_template("scholarlibrary.html", user=user, isbn_dictionary=isbn_dictionary, rating_dictionary=rating_dictionary)

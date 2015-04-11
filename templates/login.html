@@ -8,6 +8,8 @@
 
     <!-- Custom styles for this template -->
     <link href="signin.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="static/images/book-stack.gif">
+
 
   <style>
   body {
@@ -37,6 +39,7 @@
   {% endif %}
 
   <body>
+
     <div class="container">
 
       <form method="post" action="/scholarmain" id="info" enctype="multipart/form-data" class="form-signin">
@@ -59,7 +62,16 @@
              <input type="submit" class="btn btn-lg btn-primary btn-block" value="Sign In">
           </div>
         </div>
-      </form>      
+     
+
+        <div class="row">
+            <p></p>
+            <div class="col-md-3">
+               <a href="/addscholar" class="btn btn-sm btn-primary btn-block" role="button">Not a member? Sign up Here</a>
+            </div>
+        </div>
+
+     </form> 
 
 
       <form method="post" action="/staffmain" id="info" enctype="multipart/form-data" class="form-signin">
