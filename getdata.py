@@ -4,7 +4,7 @@ This file retrieves all information from google spreadsheets and updates the dat
 """
 from model import Scholar, Goal, Book, BookLog, Rating, session as dbsession
 import gspread
-import datetime 
+import datetime
 import os
 
 gmail_address = os.environ.get('GMAIL_ADDRESS')
@@ -28,7 +28,7 @@ val = worksheet.acell('C4').value
 #print list_of_lists[1][0]
 #print val
 
-#Queries 
+#Queries
 # adds a scholar to the db
 scholar1 = Scholar(name = worksheet.acell('B2').value, school = worksheet.acell('D2').value, last_log_in = datetime.datetime.now())
 dbsession.add(scholar1)

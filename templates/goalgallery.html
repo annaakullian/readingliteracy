@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block body %}
+
 <style>
       body {
         padding-top: 30px; /* 60px to make the container go all the way to the bottom of the topbar */
@@ -9,21 +10,39 @@
         background-attachment: fixed;
       }
 </style>
-<div class="container">
+<div class="container" id="pdf">
 
       <h1>{{user}}'s Achieved Goals!</h1>
 
-<h2> First Goal Achieved: Being part of BUILD! Good job! You are on your way to be a golden reader! </h2>
+<h2> First Goal Achieved: Being part of BUILD! Good job! </h2>
+
 
 {% for goal in goals %}
 		{% if goal.achieved == True %}
 			<div class="row">
 
-			<h2>Your Goal Was To Read {{goal.goal_number}} {{goal.goal_description}}</h2>
+			<h2 style="color:blue;">Your Goal Was To Read {{goal.goal_number}} {{goal.goal_description}}</h2>
 			status: {{goal.status}}/{{goal.goal_number}}
 			</div>
 		{% endif %}
 {% endfor %}
+
+</div>
+
+<input type="button" class="btn btn-lg btn-info" onclick="printDiv('pdf')" value="Print your Goal Gallery!" />
+
+<script>
+
+
+function printDiv(divName) {
+    var printContents = document.getElementById(divName).innerHTML;
+    var originalContents = document.body;
+    document.body.innerHTML = printContents;
+    window.print();
+    document.body.innerHTML = originalContents;
+}
+
+</script>
 
 
 {% endblock %}  
