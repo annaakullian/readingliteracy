@@ -167,18 +167,13 @@ def scholarlibrary():
         for book_id in bookids:
             book = dbsession.query(Book).filter_by(id=book_id).first()
             book_list.append(book)
-    print "book list", book_list
     for book in book_list:
-        print "mom book list", book_list
-        file = urllib2.urlopen('http://www.librarything.com/api/thingTitle/%s' % (book.title))
-        print "my file", file
+        title = book.title.replace(" ", "%20")
+        file = urllib2.urlopen('http://www.librarything.com/api/thingTitle/%s' % (title))
         data = file.read()
         file.close()
-        print "flower", data
         data = xmltodict.parse(data)
-        print "my data", data
         xml_dictionary[book] = data
-        print "myy dictionary", xml_dictionary
 
         book_id = book.id
         rating = dbsession.query(Rating).filter_by(book_id=book_id).first()
@@ -189,9 +184,12 @@ def scholarlibrary():
     isbn_dictionary = {}
     for book in xml_dictionary.keys():
         book_id = book.id
+        print "book id ******", book_id
         book_object = dbsession.query(Book).filter_by(id=book_id).first()
         isbn_number_from_db = book_object.isbn
+        print "********** THIS IS THE ISBN NUMBER", isbn_number_from_db
         if not isbn_number_from_db:
+            print "it works \n\n*************"
             diction = xml_dictionary[book]
             isbn_number = diction.get(u'idlist', None)
             isbn_number2 = isbn_number.get([u'isbn'][0], None)
@@ -219,8 +217,11 @@ def scholarlibrary():
         old_value = rating_dictionary.get(book, [])
         new_value = old_value + value_to_append
         rating_dictionary[book] = new_value
-        print rating_dictionary[book]
-        print rating_dictionary[book][0].rating
+        print "************************"
+        print "book", rating_dictionary[book]
+        print "rating", rating_dictionary[book][0].rating
+        print "************************"
+
 
     return render_template("scholarlibrary.html", user=user, isbn_dictionary=isbn_dictionary, rating_dictionary=rating_dictionary)
 
@@ -249,6 +250,7 @@ def digestaddbook():
     dbsession.add(rating)
     dbsession.commit()
     return redirect("/scholarlibrary")
+
 
 if __name__ == "__main__":
     app.run(debug=True)
