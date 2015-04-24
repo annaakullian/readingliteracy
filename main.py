@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, session, redirect, flash, url_for, make_response
-from model import Scholar, Goal, Book, BookLog, Rating, session as dbsession
+from model import Scholar, Goal, Book, BookLog, session as dbsession
 import os
 import json
 from lxml import html, etree
@@ -54,8 +54,6 @@ def scholarmain():
         error = "Make sure your name is spelled correctly!"
         return render_template("login.html", error=error)
     else:
-        #check to make sure user is in the database. if not, say to check spelling and try again"
-        #put user into session
         session['user'] = user.name
         scholar_id = dbsession.query(Scholar).filter_by(name=user.name).first().id
         goals = dbsession.query(Goal).filter_by(scholar_id=scholar_id).all()
@@ -74,7 +72,6 @@ def staffmain():
 def activegoals():
     user = session['user']
     scholar_id = dbsession.query(Scholar).filter_by(name=user).first().id
-    # scholar_id = scholar.id
     goals = dbsession.query(Goal).filter_by(scholar_id=scholar_id).all()
     return render_template("activegoals.html", user=session['user'], goals=goals)
 
@@ -115,7 +112,6 @@ def addgoal():
 
 @app.route("/addgoal", methods=['POST'])
 def digestgoal():
-    #add goal into the database
     goal_number = request.form['goal_number']
     goal_description = request.form['goal_description']
     strength_or_endurance = "strength"
@@ -124,8 +120,6 @@ def digestgoal():
     dbsession.add(goal)
     dbsession.commit()
     return redirect("/activegoals")
-    #add to database
-    #show in active goals
 
 @app.route("/addendurancegoal", methods=['GET'])
 def addendurancegoal():
@@ -133,7 +127,6 @@ def addendurancegoal():
 
 @app.route("/addendurancegoal", methods=['POST'])
 def digestendurancegoal():
-    #add goal into the database
     goal_number = request.form['goal_number']
     goal_description = request.form['goal_description']
     strength_or_endurance = "endurance"
@@ -154,76 +147,22 @@ def goalgallery():
 
 @app.route("/scholarlibrary")
 def scholarlibrary():
+    """
+    School Library displays all books that the scholar
+    has read as well as their book covers and
+    ratings.
+
+    """
     user = session['user']
-    print "got here"
     scholar_id = dbsession.query(Scholar).filter_by(name=user).first().id
     booklogs = dbsession.query(BookLog).filter_by(scholar_id=scholar_id).all()
-    #book list is a list of book objects read by user
-    book_list = []
-    rating_dictionary = {}
-    xml_dictionary = {}
+    book_dictionary = {}
     if booklogs:
-        bookids = [i.book_id for i in booklogs]
-        for book_id in bookids:
-            book = dbsession.query(Book).filter_by(id=book_id).first()
-            book_list.append(book)
-    for book in book_list:
-        title = book.title.replace(" ", "%20")
-        file = urllib2.urlopen('http://www.librarything.com/api/thingTitle/%s' % (title))
-        data = file.read()
-        file.close()
-        data = xmltodict.parse(data)
-        xml_dictionary[book] = data
+        for book_log in booklogs:
+            book = dbsession.query(Book).filter_by(id=book_log.book_id).first()
+            book_dictionary[book] = book_log.rating
 
-        book_id = book.id
-        rating = dbsession.query(Rating).filter_by(book_id=book_id).first()
-        if rating:
-            rating_dictionary[book] = [rating]
-        else:
-            rating_dictionary[book] = ["rate this book"]
-    isbn_dictionary = {}
-    for book in xml_dictionary.keys():
-        book_id = book.id
-        print "book id ******", book_id
-        book_object = dbsession.query(Book).filter_by(id=book_id).first()
-        isbn_number_from_db = book_object.isbn
-        print "********** THIS IS THE ISBN NUMBER", isbn_number_from_db
-        if not isbn_number_from_db:
-            print "it works \n\n*************"
-            diction = xml_dictionary[book]
-            isbn_number = diction.get(u'idlist', None)
-            isbn_number2 = isbn_number.get([u'isbn'][0], None)
-            while isinstance(isbn_number2, list):
-                isbn_number2 = isbn_number2[0]
-            # int_isbn_number = int(str((isbn_number2)))
-            if len(str(isbn_number2))==9:
-                isbn_number2 = "0" + str(isbn_number2)
-            elif len(str(isbn_number2))==9:
-                isbn_number2 = "00" + str(isbn_number2)
-            else:
-                isbn_number2 = isbn_number2
-            book_object.isbn = isbn_number2
-            dbsession.commit()
-    for book in rating_dictionary.keys():
-        book_isbn = book.isbn
-        length_isbn = len(str(book_isbn))
-        if length_isbn==9:
-            book_isbn = "0" + str(book_isbn)
-        elif length_isbn==8:
-            book_isbn = "00" + str(book_isbn)
-        else:
-            book_isbn = book.isbn
-        value_to_append = [book_isbn]
-        old_value = rating_dictionary.get(book, [])
-        new_value = old_value + value_to_append
-        rating_dictionary[book] = new_value
-        print "************************"
-        print "book", rating_dictionary[book]
-        print "rating", rating_dictionary[book][0].rating
-        print "************************"
-
-
-    return render_template("scholarlibrary.html", user=user, isbn_dictionary=isbn_dictionary, rating_dictionary=rating_dictionary)
+    return render_template("scholarlibrary.html", user=user, book_dictionary=book_dictionary)
 
 
 @app.route("/addbook", methods=["GET"])
@@ -233,21 +172,34 @@ def addbook():
 
 @app.route("/addbook", methods=["POST"])
 def digestaddbook():
-    #add goal into the database
+    """
+    Add a book to the database.
+    """
     book_title = request.form['title']
     book_author = request.form['author']
     book_rating = request.form['rating']
     user_object = dbsession.query(Scholar).filter_by(name=session['user']).first()
     book = dbsession.query(Book).filter_by(title=book_title).filter_by(author=book_author).first()
     if not book:
-        book_to_add = Book(author=book_author, title=book_title)
+        title_for_url = book_title.replace(" ", "%20")
+        file = urllib2.urlopen('http://www.librarything.com/api/thingTitle/%s' % (title_for_url))
+        data = file.read()
+        file.close()
+        data = xmltodict.parse(data)
+        idlist_dictionary = data.get(u'idlist', None)
+        isbn_number = idlist_dictionary.get([u'isbn'][0], None)
+        if isbn_number is None:
+            cover_url = "http://www.readingforpleasure.net/wp-content/uploads/2012/01/cat-reading-book.jpg"
+        else:
+            while isinstance(isbn_number, list):
+                    isbn_number = isbn_number[0]
+            cover_url = "http://covers.openlibrary.org/b/isbn/%s-L.jpg" % (isbn_number)
+        book_to_add = Book(author=book_author, title=book_title, isbn=isbn_number, cover_url=cover_url)
         dbsession.add(book_to_add)
         dbsession.commit()
         book = dbsession.query(Book).filter_by(title=book_title).filter_by(author=book_author).first()
-    book_log = BookLog(book_id = book.id, scholar_id=user_object.id)
+    book_log = BookLog(book_id=book.id, scholar_id=user_object.id, rating=book_rating)
     dbsession.add(book_log)
-    rating = Rating(book_id=book.id, scholar_id=user_object.id, rating=book_rating)
-    dbsession.add(rating)
     dbsession.commit()
     return redirect("/scholarlibrary")
 
